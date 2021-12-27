@@ -6,30 +6,30 @@ using System.Threading.Tasks;
 
 namespace ImplementazioneAES
 {
-    internal class Decryptor
+    internal static class Decryptor
     {
-        internal byte InvSubBytes(byte[,] state)
+        private static byte[,] InvSubBytes(byte[,] state)
         {
             //TODO
-            return 0x00;
+            return state;
         }
 
-        internal byte InvShiftRows(byte[,] state)
+        private static byte[,] InvShiftRows(byte[,] state)
         {
             //TODO
-            return 0x00;
+            return state;
         }
 
-        internal byte InvMixColumns(byte[,] state)
+        private static byte[,] InvMixColumns(byte[,] state)
         {
             //TODO
-            return 0x00;
+            return state;
         }
 
-        internal byte InvAddRoundKey(byte[,] state, byte[,] key)
+        private static byte[,] InvAddRoundKey(byte[,] state, byte[,] key)
         {
             //TODO
-            return 0x00;
+            return state;
         }
     }
 }
