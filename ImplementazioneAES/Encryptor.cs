@@ -9,7 +9,7 @@ namespace ImplementazioneAES
 {
     internal static class Encryptor
     {
-        private static byte[] SubBytes(byte[] state)
+        internal static byte[] SubBytes(byte[] state)
         {
             byte[] sbox = new byte[]
             { 0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
@@ -29,23 +29,27 @@ namespace ImplementazioneAES
               0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
               0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16};
             byte[] after = (byte[])state.Clone();
-            //TODO
-            return state;
+            for (int i = 0; i < state.Length; i++)
+            {
+                // Il valore dello stato è passato attraverso la sbox, e sostituito con un valore specifico
+                after[i] = sbox[state[i]];
+            }
+            return after;
         }
 
-        private static byte[,] ShiftRows(byte[,] state)
+        internal static byte[] ShiftRows(byte[] state)
         {
             //TODO
             return state;
         }
 
-        private static byte[,] MixColumns(byte[,] state)
+        internal static byte[] MixColumns(byte[] state)
         {
             //TODO
             return state;
         }
 
-        private static byte[,] AddRoundKey(byte[,] state, byte[,] key)
+        internal static byte[] AddRoundKey(byte[] state, byte[] key)
         {
             //TODO
             return state;
