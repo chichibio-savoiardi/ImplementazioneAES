@@ -39,38 +39,50 @@ namespace ImplementazioneAES
 
         internal static byte[] ShiftRows(byte[] state)
         {
-            List<byte[]> list = new List<byte[]>();
+            int len = state.Length;
 
-            list.Add(state[0..3]);
-            list.Add(ShiftLeft(state[4..7], 1));
-            list.Add(ShiftLeft(state[8..11], 2));
-            list.Add(ShiftLeft(state[12..15], 3));
+            List<byte[]> list = new List<byte[]>(len + 1);
 
-            byte[] output = list.Cast<byte>().ToArray();
+            list.Add(state[0..4]);
+            list.Add(ShiftLeft(state[4..8], 1));
+            list.Add(ShiftLeft(state[8..12], 2));
+            list.Add(ShiftLeft(state[12..16], 3));
+
+            byte[] output = new byte[len];
+
+            int i = 0;
+            foreach (var item in list)
+            {
+                foreach (var elem in item)
+                {
+                    output[i++] = elem;
+                }
+            }
 
             return output;
         }
 
         private static byte[] ShiftLeft(byte[] arr, int times)
         {
+            byte[] ShiftLeftOne(byte[] arr)
+            {
+                int len = arr.Length;
+                byte[] output = new byte[len];
+                byte tmp = arr[0];
+                for (int i = 0; i < len - 1; i++)
+                {
+                    output[i] = arr[i + 1];
+                }
+                output[len - 1] = tmp;
+
+                return output;
+            }
+
             byte[] output = (byte[])arr.Clone();
             for (int i = 0; i < times; i++)
             {
                 output = ShiftLeftOne(output);
             }
-            return output;
-        }
-
-        private static byte[] ShiftLeftOne(byte[] arr)
-        {
-            int len = arr.Length;
-            byte[] output = new byte[len];
-            for (int i = 0; i < len - 1; i++)
-            {
-                output[i] = arr[i + 1];
-            }
-            output[len - 1] = arr[0];
-
             return output;
         }
 
