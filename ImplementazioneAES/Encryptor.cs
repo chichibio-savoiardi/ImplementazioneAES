@@ -27,20 +27,51 @@ namespace ImplementazioneAES
               0xba, 0x78, 0x25, 0x2e, 0x1c, 0xa6, 0xb4, 0xc6, 0xe8, 0xdd, 0x74, 0x1f, 0x4b, 0xbd, 0x8b, 0x8a,
               0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e,
               0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
-              0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16};
-            byte[] after = (byte[])state.Clone();
+              0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16 };
+            byte[] output = (byte[])state.Clone();
             for (int i = 0; i < state.Length; i++)
             {
                 // Il valore dello stato è passato attraverso la sbox, e sostituito con un valore specifico
-                after[i] = sbox[state[i]];
+                output[i] = sbox[state[i]];
             }
-            return after;
+            return output;
         }
 
         internal static byte[] ShiftRows(byte[] state)
         {
-            //TODO
-            return state;
+            List<byte[]> list = new List<byte[]>();
+
+            list.Add(state[0..3]);
+            list.Add(ShiftLeft(state[4..7], 1));
+            list.Add(ShiftLeft(state[8..11], 2));
+            list.Add(ShiftLeft(state[12..15], 3));
+
+            byte[] output = list.Cast<byte>().ToArray();
+
+            return output;
+        }
+
+        private static byte[] ShiftLeft(byte[] arr, int times)
+        {
+            byte[] output = (byte[])arr.Clone();
+            for (int i = 0; i < times; i++)
+            {
+                output = ShiftLeftOne(output);
+            }
+            return output;
+        }
+
+        private static byte[] ShiftLeftOne(byte[] arr)
+        {
+            int len = arr.Length;
+            byte[] output = new byte[len];
+            for (int i = 0; i < len - 1; i++)
+            {
+                output[i] = arr[i + 1];
+            }
+            output[len - 1] = arr[0];
+
+            return output;
         }
 
         internal static byte[] MixColumns(byte[] state)
@@ -56,3 +87,24 @@ namespace ImplementazioneAES
         }
     }
 }
+
+/*
+int len = (int)Math.Sqrt(state.Length);
+int span = 0;
+for (int i = 1; i < len; i++)
+{
+  int row = len * i;
+  byte tmp = state[row + span];
+  span++;
+  for (int ispan = 0; ispan < span; ispan++)
+  {
+    tmp = state[row + ispan];
+    for (int j = 0; j < len - span; j++)
+    {
+      int index = row + j;
+      output[index] = state[index + span];
+    }
+    output[row + 3] = tmp;
+  }
+}
+*/
