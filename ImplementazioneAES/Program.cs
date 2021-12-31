@@ -37,7 +37,15 @@
 
         private static void Test(string[] args)
         {
-            var chars = args[0].ToCharArray();
+            Console.WriteLine("\nTest SubBytes():\n");
+            TestSubBytes(args);
+            Console.WriteLine("\nTest ShiftRows():\n");
+            TestShiftRows(args);
+        }
+
+        private static void TestSubBytes(string[] args)
+        {
+            /*var chars = args[0].ToCharArray();
             byte[] bytes = new byte[16];
             for (int i = 0; i < bytes.Length && i < chars.Length; i++)
             {
@@ -53,6 +61,33 @@
 
             byte[] res = Encryptor.SubBytes(bytes);
 
+            foreach (var r in res)
+            {
+                Console.Write(r + " ");
+            }*/
+
+            byte en = Encryptor.SubBytes(new byte[] { 0x9a })[0];
+            byte de = Decryptor.InvSubBytes(new byte[] { en })[0];
+
+            Console.WriteLine($"en : {en}");
+            Console.WriteLine($"de : {de}");
+            Console.WriteLine($"en == 0xb8 : {en == 0xb8}");
+            Console.WriteLine($"de == 0x9a : {de == 0x9a}");
+        }
+
+        private static void TestShiftRows(string[] args)
+        {
+            byte[] arr = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
+
+            Console.WriteLine("Bytes prima:");
+            foreach (var a in arr)
+            {
+                Console.Write(a + " ");
+            }
+
+            byte[] res = Encryptor.ShiftRows(arr);
+
+            Console.WriteLine("\nBytes dopo:");
             foreach (var r in res)
             {
                 Console.Write(r + " ");
