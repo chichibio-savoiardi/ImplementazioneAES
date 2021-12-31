@@ -92,6 +92,14 @@
             {
                 Console.Write(r + " ");
             }
+
+            byte[] inv = Decryptor.InvShiftRows(res);
+
+            Console.WriteLine("\nBytes reinvertiti:");
+            foreach (var i in inv)
+            {
+                Console.Write(i + " ");
+            }
         }
     }
 }

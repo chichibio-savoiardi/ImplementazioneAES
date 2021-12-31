@@ -51,9 +51,9 @@ namespace ImplementazioneAES
             byte[] output = new byte[len];
 
             int i = 0;
-            foreach (var item in list)
+            foreach (var arr in list)
             {
-                foreach (var elem in item)
+                foreach (var elem in arr)
                 {
                     output[i++] = elem;
                 }
