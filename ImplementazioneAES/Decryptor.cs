@@ -38,21 +38,21 @@ namespace ImplementazioneAES
 
         internal static byte[] InvShiftRows(byte[] state)
         {
-           byte[] after = new byte[16];
+            byte[] after = new byte[16];
             after = state;
             byte temp = 0;
-              for (int i = 4; i < after.Length; i=i+4){
-                  temp = after[i + 3];
-                  for (int j = i+2; j > 0; j--)
-                  {
-                      after[j+1] = after[j];
-                     // Console.WriteLine("passo: " + after[j]);
-                     //
-                  }
-                  after[i] = temp;
-              }  
-            
-           //temp=after[3]
+            for (int i = 4; i < after.Length; i = i + 4)
+            {
+                temp = after[i + 3];
+                for (int j = i + 2; j > 0; j--)
+                {
+                    after[j + 1] = after[j];
+                    // Console.WriteLine("passo: " + after[j]);
+                }
+                after[i] = temp;
+            }
+
+            //temp=after[3]
             //TODO
             return after;
         }
