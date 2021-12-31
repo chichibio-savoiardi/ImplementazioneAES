@@ -57,13 +57,13 @@ namespace ImplementazioneAES
             return after;
         }
 
-        internal static byte[,] InvMixColumns(byte[,] state)
+        internal static byte[] InvMixColumns(byte[] state)
         {
             //TODO
             return state;
         }
 
-        internal static byte[,] InvAddRoundKey(byte[,] state, byte[,] key)
+        internal static byte[] InvAddRoundKey(byte[] state, byte[] key)
         {
             //TODO
             return state;
