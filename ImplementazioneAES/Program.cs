@@ -41,6 +41,8 @@
             TestSubBytes(args);
             Console.WriteLine("\nTest ShiftRows():\n");
             TestShiftRows(args);
+            Console.WriteLine("\nTest MixColumns():\n");
+            TestMixColumns(args);
         }
 
         private static void TestSubBytes(string[] args)
@@ -94,6 +96,33 @@
             }
 
             byte[] inv = Decryptor.InvShiftRows(res);
+
+            Console.WriteLine("\nBytes reinvertiti:");
+            foreach (var i in inv)
+            {
+                Console.Write(i + " ");
+            }
+        }
+
+        private static void TestMixColumns(string[] args)
+        {
+            byte[] arr = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
+
+            Console.WriteLine("Bytes prima:");
+            foreach (var a in arr)
+            {
+                Console.Write(a + " ");
+            }
+
+            byte[] res = Encryptor.MixColumns(arr);
+
+            Console.WriteLine("\nBytes dopo:");
+            foreach (var r in res)
+            {
+                Console.Write(r + " ");
+            }
+
+            byte[] inv = Decryptor.InvMixColumns(res);
 
             Console.WriteLine("\nBytes reinvertiti:");
             foreach (var i in inv)

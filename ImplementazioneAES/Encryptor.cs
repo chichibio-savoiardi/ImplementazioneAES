@@ -39,30 +39,23 @@ namespace ImplementazioneAES
 
         internal static byte[] ShiftRows(byte[] state)
         {
-            int len = state.Length;
-
-            List<byte[]> list = new List<byte[]>(len + 1);
-
-            list.Add(state[0..4]);
-            list.Add(ShiftLeft(state[4..8], 1));
-            list.Add(ShiftLeft(state[8..12], 2));
-            list.Add(ShiftLeft(state[12..16], 3));
-
+            int len = state.Length, sideLen = (int)Math.Sqrt(len);
             byte[] output = new byte[len];
 
-            int i = 0;
-            foreach (var arr in list)
+            for (int i = 0; i < sideLen; i++)
             {
-                foreach (var elem in arr)
-                {
-                    output[i++] = elem;
-                }
+                // In modo da trattare l'array come se fosse una matrice
+                int row = i * sideLen;
+                // Calcolo lo shift della parte dello stato che mi interessa (righa i), con offset i
+                byte[] tmp = ShiftLeft(state[row..(row + sideLen)], i);
+                // Copio il risultato nell'output, alla corrente
+                Buffer.BlockCopy(tmp, 0, output, row, sideLen);
             }
 
             return output;
         }
 
-        private static byte[] ShiftLeft(byte[] arr, int times)
+        private static byte[] ShiftLeft(byte[] arr, int offset)
         {
             byte[] ShiftLeftOne(byte[] arr)
             {
@@ -79,7 +72,7 @@ namespace ImplementazioneAES
             }
 
             byte[] output = (byte[])arr.Clone();
-            for (int i = 0; i < times; i++)
+            for (int i = 0; i < offset; i++)
             {
                 output = ShiftLeftOne(output);
             }
@@ -88,8 +81,50 @@ namespace ImplementazioneAES
 
         internal static byte[] MixColumns(byte[] state)
         {
-            //TODO
-            return state;
+            // Lunghezze comuni
+            int len = state.Length;
+            int sideLen = (int)Math.Sqrt(len);
+            // Preparazione dati.
+            // `data` contiene i dati della trasformazione, che verranno ricopiati e convertiti in array1d in `output` alla fine
+            byte[,] data = new byte[sideLen, sideLen];
+            byte[,] stateMatrix = new byte[sideLen, sideLen];
+            Buffer.BlockCopy(state, 0, stateMatrix, 0, len);
+
+            for (int c = 0; c < 4; c++)
+            {
+                data[0, c] = (byte)(GMul(0x02, stateMatrix[0, c]) ^ GMul(0x03, stateMatrix[1, c]) ^ stateMatrix[2, c] ^ stateMatrix[3, c]);
+                data[1, c] = (byte)(stateMatrix[0, c] ^ GMul(0x02, stateMatrix[1, c]) ^ GMul(0x03, stateMatrix[2, c]) ^ stateMatrix[3, c]);
+                data[2, c] = (byte)(stateMatrix[0, c] ^ stateMatrix[1, c] ^ GMul(0x02, stateMatrix[2, c]) ^ GMul(0x03, stateMatrix[3, c]));
+                data[3, c] = (byte)(GMul(0x03, stateMatrix[0, c]) ^ stateMatrix[1, c] ^ stateMatrix[2, c] ^ GMul(0x02, stateMatrix[3, c]));
+            }
+
+            byte[] output = new byte[len];
+            Buffer.BlockCopy(data, 0, output, 0, len);
+
+            return output;
+        }
+
+        private static byte GMul(byte a, byte b)
+        {
+            byte p = 0;
+
+            for (int counter = 0; counter < 8; counter++)
+            {
+                if ((b & 1) != 0)
+                {
+                    p ^= a;
+                }
+
+                bool hi_bit_set = (a & 0x80) != 0;
+                a <<= 1;
+                if (hi_bit_set)
+                {
+                    a ^= 0x1B; /* x^8 + x^4 + x^3 + x + 1 */
+                }
+                b >>= 1;
+            }
+
+            return p;
         }
 
         internal static byte[] AddRoundKey(byte[] state, byte[] key)
