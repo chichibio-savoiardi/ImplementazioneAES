@@ -88,8 +88,50 @@ namespace ImplementazioneAES
 
         internal static byte[] MixColumns(byte[] state)
         {
-            //TODO
-            return state;
+            // Lunghezze comuni
+            int len = state.Length;
+            int sideLen = (int)Math.Sqrt(len);
+            // Preparazione dati.
+            // `data` contiene i dati della trasformazione, che verranno ricopiati e convertiti in array1d in `output` alla fine
+            byte[,] data = new byte[sideLen, sideLen];
+            byte[,] stateMatrix = new byte[sideLen, sideLen];
+            Buffer.BlockCopy(state, 0, stateMatrix, 0, len);
+
+            for (int c = 0; c < 4; c++)
+            {
+                data[0, c] = (byte)(GMul(0x02, stateMatrix[0, c]) ^ GMul(0x03, stateMatrix[1, c]) ^ stateMatrix[2, c] ^ stateMatrix[3, c]);
+                data[1, c] = (byte)(stateMatrix[0, c] ^ GMul(0x02, stateMatrix[1, c]) ^ GMul(0x03, stateMatrix[2, c]) ^ stateMatrix[3, c]);
+                data[2, c] = (byte)(stateMatrix[0, c] ^ stateMatrix[1, c] ^ GMul(0x02, stateMatrix[2, c]) ^ GMul(0x03, stateMatrix[3, c]));
+                data[3, c] = (byte)(GMul(0x03, stateMatrix[0, c]) ^ stateMatrix[1, c] ^ stateMatrix[2, c] ^ GMul(0x02, stateMatrix[3, c]));
+            }
+
+            byte[] output = new byte[len];
+            Buffer.BlockCopy(data, 0, output, 0, len);
+
+            return output;
+        }
+
+        private static byte GMul(byte a, byte b)
+        {
+            byte p = 0;
+
+            for (int counter = 0; counter < 8; counter++)
+            {
+                if ((b & 1) != 0)
+                {
+                    p ^= a;
+                }
+
+                bool hi_bit_set = (a & 0x80) != 0;
+                a <<= 1;
+                if (hi_bit_set)
+                {
+                    a ^= 0x1B; /* x^8 + x^4 + x^3 + x + 1 */
+                }
+                b >>= 1;
+            }
+
+            return p;
         }
 
         internal static byte[] AddRoundKey(byte[] state, byte[] key)
@@ -101,7 +143,7 @@ namespace ImplementazioneAES
 }
 
 /*
-int len = (int)Math.Sqrt(state.Length);
+int len = (int)Math.Sqrt(len);
 int span = 0;
 for (int i = 1; i < len; i++)
 {
