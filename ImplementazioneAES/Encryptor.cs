@@ -136,7 +136,7 @@ namespace ImplementazioneAES
 }
 
 /*
-int len = (int)Math.Sqrt(len);
+int len = (int)Math.Sqrt(state.Length);
 int span = 0;
 for (int i = 1; i < len; i++)
 {
