@@ -36,25 +36,54 @@ namespace ImplementazioneAES
             return after;
         }
 
-        internal static byte[] InvShiftRows(byte[] state)
+
+        internal static byte[] ShiftRows(byte[] state)
         {
-            byte[] after = new byte[16];
-            after = state;
-            byte temp = 0;
-            for (int i = 4; i < after.Length; i = i + 4)
+            int len = state.Length;
+
+            List<byte[]> list = new List<byte[]>(len + 1);
+
+            list.Add(state[0..4]);
+            list.Add(ShiftRight(state[4..8], 1));
+            list.Add(ShiftRight(state[8..12], 2));
+            list.Add(ShiftRight(state[12..16], 3));
+
+            byte[] output = new byte[len];
+
+            int i = 0;
+            foreach (var arr in list)
             {
-                temp = after[i + 3];
-                for (int j = i + 2; j > 0; j--)
+                foreach (var elem in arr)
                 {
-                    after[j + 1] = after[j];
-                    // Console.WriteLine("passo: " + after[j]);
+                    output[i++] = elem;
                 }
-                after[i] = temp;
             }
 
-            //temp=after[3]
-            //TODO
-            return after;
+            return output;
+        }
+
+        private static byte[] ShiftRight(byte[] arr, int times)
+        {
+            byte[] ShiftRightOne(byte[] arr)
+            {
+                int len = arr.Length;
+                byte[] output = new byte[len];
+                byte tmp = arr[len - 1];
+                for (int i = len-1; i > 0; i--)
+                {
+                    output[i] = arr[i-1];
+                }
+                output[0] = tmp;
+
+                return output;
+            }
+
+            byte[] output = (byte[])arr.Clone();
+            for (int i = 0; i < times; i++)
+            {
+                output = ShiftRightOne(output);
+            }
+            return output;
         }
 
         internal static byte[] InvMixColumns(byte[] state)
