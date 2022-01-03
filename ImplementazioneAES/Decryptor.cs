@@ -69,9 +69,9 @@ namespace ImplementazioneAES
                 int len = arr.Length;
                 byte[] output = new byte[len];
                 byte tmp = arr[len - 1];
-                for (int i = len-1; i > 0; i--)
+                for (int i = len - 1; i > 0; i--)
                 {
-                    output[i] = arr[i-1];
+                    output[i] = arr[i - 1];
                 }
                 output[0] = tmp;
 
