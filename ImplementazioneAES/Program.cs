@@ -29,6 +29,9 @@
                 case "decrypt":
                     Console.WriteLine("TODO, decrypt file " + args[1]);
                     break;
+                case "help":
+                    Console.WriteLine(Program.HelpStr);
+                    break;
                 default:
                     Console.WriteLine("Operazione non supportata.\n" + Program.HelpStr);
                     break;
@@ -43,6 +46,8 @@
             TestShiftRows(args);
             Console.WriteLine("\nTest MixColumns():\n");
             TestMixColumns(args);
+            Console.WriteLine("\nTest AddRoundKey():\n");
+            TestAddRoundKey(args);
         }
 
         private static void TestSubBytes(string[] args)
@@ -75,6 +80,7 @@
             Console.WriteLine($"de : {de}");
             Console.WriteLine($"en == 0xb8 : {en == 0xb8}");
             Console.WriteLine($"de == 0x9a : {de == 0x9a}");
+            Console.WriteLine();
         }
 
         private static void TestShiftRows(string[] args)
@@ -102,6 +108,7 @@
             {
                 Console.Write(i + " ");
             }
+            Console.WriteLine();
         }
 
         private static void TestMixColumns(string[] args)
@@ -129,6 +136,41 @@
             {
                 Console.Write(i + " ");
             }
+            Console.WriteLine();
+        }
+
+        private static void TestAddRoundKey(string[] args)
+        {
+            byte[] arr = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
+            byte[] key = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
+
+            Console.WriteLine("Key:");
+            foreach (var k in key)
+            {
+                Console.Write(k + " ");
+            }
+            Console.WriteLine("\nBytes prima:");
+            foreach (var a in arr)
+            {
+                Console.Write(a + " ");
+            }
+
+            byte[] res = Encryptor.AddRoundKey(arr, key);
+
+            Console.WriteLine("\nBytes dopo:");
+            foreach (var r in res)
+            {
+                Console.Write(r + " ");
+            }
+
+            byte[] inv = Decryptor.InvAddRoundKey(res, key);
+
+            Console.WriteLine("\nBytes reinvertiti:");
+            foreach (var i in inv)
+            {
+                Console.Write(i + " ");
+            }
+            Console.WriteLine();
         }
     }
 }

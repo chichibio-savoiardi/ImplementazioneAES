@@ -48,7 +48,7 @@ namespace ImplementazioneAES
                 int row = i * sideLen;
                 // Calcolo lo shift della parte dello stato che mi interessa (righa i), con offset i
                 byte[] tmp = ShiftLeft(state[row..(row + sideLen)], i);
-                // Copio il risultato nell'output, alla corrente
+                // Copio il risultato nell'output, alla riga corrente
                 Buffer.BlockCopy(tmp, 0, output, row, sideLen);
             }
 
@@ -82,8 +82,7 @@ namespace ImplementazioneAES
         internal static byte[] MixColumns(byte[] state)
         {
             // Lunghezze comuni
-            int len = state.Length;
-            int sideLen = (int)Math.Sqrt(len);
+            int len = state.Length, sideLen = (int)Math.Sqrt(len);
             // Preparazione dati.
             // `data` contiene i dati della trasformazione, che verranno ricopiati e convertiti in array1d in `output` alla fine
             byte[,] data = new byte[sideLen, sideLen];
@@ -129,29 +128,9 @@ namespace ImplementazioneAES
 
         internal static byte[] AddRoundKey(byte[] state, byte[] key)
         {
+            byte[] output = new byte[state.Length];
             //TODO
-            return state;
+            return output;
         }
     }
 }
-
-/*
-int len = (int)Math.Sqrt(state.Length);
-int span = 0;
-for (int i = 1; i < len; i++)
-{
-  int row = len * i;
-  byte tmp = state[row + span];
-  span++;
-  for (int ispan = 0; ispan < span; ispan++)
-  {
-    tmp = state[row + ispan];
-    for (int j = 0; j < len - span; j++)
-    {
-      int index = row + j;
-      output[index] = state[index + span];
-    }
-    output[row + 3] = tmp;
-  }
-}
-*/
