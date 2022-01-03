@@ -37,7 +37,7 @@ namespace ImplementazioneAES
         }
 
 
-        internal static byte[] ShiftRows(byte[] state)
+        internal static byte[] InvShiftRows(byte[] state)
         {
             int len = state.Length;
 
