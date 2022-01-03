@@ -8,9 +8,9 @@ namespace ImplementazioneAES
 {
     internal class CipherCore
     {
-        public static int NK { get; internal set; } = 4;
-        public static int NB { get; internal set; } = 4;
-        public static int NR { get; internal set; } = 10;
+        internal int NK { get; set; } = 4;
+        internal int NB { get; set; } = 4;
+        internal int NR { get; set; } = 10;
 
         internal string Encrypt()
         {
