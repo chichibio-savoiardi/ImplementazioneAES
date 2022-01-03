@@ -88,10 +88,51 @@ namespace ImplementazioneAES
 
         internal static byte[] InvMixColumns(byte[] state)
         {
-            //TODO
-            return state;
-        }
+            // Lunghezze comuni
+            int len = state.Length, sideLen = (int)Math.Sqrt(len);
+            // Preparazione dati.
+            // `data` contiene i dati della trasformazione, che verranno ricopiati e convertiti in array1d in `output` alla fine
+            byte[,] data = new byte[sideLen, sideLen];
+            byte[,] stateMatrix = new byte[sideLen, sideLen];
+            Buffer.BlockCopy(state, 0, stateMatrix, 0, len);
 
+            for (int c = 0; c < 4; c++)
+            {
+                data[0, c] = (byte)(GMul(0x0e, stateMatrix[0, c]) ^ GMul(0x0b, stateMatrix[1, c]) ^ GMul(0x0d, stateMatrix[2, c]) ^ GMul(0x09, stateMatrix[3, c]));
+                data[1, c] = (byte)(GMul(0x09, stateMatrix[0, c]) ^ GMul(0x0e, stateMatrix[1, c]) ^ GMul(0x0b, stateMatrix[2, c]) ^ GMul(0x0d, stateMatrix[3, c]));
+                data[2, c] = (byte)(GMul(0x0d, stateMatrix[0, c]) ^ GMul(0x09, stateMatrix[1, c]) ^ GMul(0x0e, stateMatrix[2, c]) ^ GMul(0x0b, stateMatrix[3, c]));
+                data[3, c] = (byte)(GMul(0x0b, stateMatrix[0, c]) ^ GMul(0x0d, stateMatrix[1, c]) ^ GMul(0x09, stateMatrix[2, c]) ^ GMul(0x0e, stateMatrix[3, c]));
+            }
+
+            byte[] output = new byte[len];
+            Buffer.BlockCopy(data, 0, output, 0, len);
+
+            return output;
+
+
+            byte GMul(byte a, byte b)
+            {
+                byte p = 0;
+
+                for (int counter = 0; counter < 8; counter++)
+                {
+                    if ((b & 1) != 0)
+                    {
+                        p ^= a;
+                    }
+
+                    bool hi_bit_set = (a & 0x80) != 0;
+                    a <<= 1;
+                    if (hi_bit_set)
+                    {
+                        a ^= 0x1B; /* x^8 + x^4 + x^3 + x + 1 */
+                    }
+                    b >>= 1;
+                }
+
+                return p;
+            }
+        }
         internal static byte[] InvAddRoundKey(byte[] state, byte[] key)
         {
             //TODO

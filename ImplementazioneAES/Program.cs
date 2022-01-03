@@ -101,7 +101,7 @@
                 Console.Write(r + " ");
             }
 
-            byte[] inv = Decryptor.ShiftRows(res);
+            byte[] inv = Decryptor.InvShiftRows(res);
 
             Console.WriteLine("\nBytes reinvertiti:");
             foreach (var r in inv)
