@@ -8,6 +8,7 @@ namespace ImplementazioneAES
 {
     internal static class Decryptor
     {
+        //sostituisce i byte applicati con la sbox con i valori della invsbox 
         internal static byte[] InvSubBytes(byte[] state)
         {
             byte[] after = (byte[])state.Clone();
@@ -19,27 +20,21 @@ namespace ImplementazioneAES
             return after;
         }
 
-
+        //
+        //funzione che posta la posizione dei byte verso destra a partire dalla seconda riga per riordinare la matrice 
         internal static byte[] InvShiftRows(byte[] state)
         {
-            int len = state.Length;
-
-            List<byte[]> list = new List<byte[]>(len + 1);
-
-            list.Add(state[0..4]);
-            list.Add(Utility.ShiftRight(state[4..8], 1));
-            list.Add(Utility.ShiftRight(state[8..12], 2));
-            list.Add(Utility.ShiftRight(state[12..16], 3));
-
+            int len = state.Length, sideLen = (int)Math.Sqrt(len);
             byte[] output = new byte[len];
 
-            int i = 0;
-            foreach (var arr in list)
+            for (int i = 0; i < sideLen; i++)
             {
-                foreach (var elem in arr)
-                {
-                    output[i++] = elem;
-                }
+                // In modo da trattare l'array come se fosse una matrice
+                int row = i * sideLen;
+                // Calcolo lo shift della parte dello stato che mi interessa (righa i), con offset i
+                byte[] tmp = Utility.ShiftRight(state[row..(row + sideLen)], i);
+                // Copio il risultato nell'output, alla riga corrente
+                Buffer.BlockCopy(tmp, 0, output, row, sideLen);
             }
 
             return output;
