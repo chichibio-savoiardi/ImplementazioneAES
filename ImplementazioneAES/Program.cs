@@ -10,7 +10,7 @@
         public static void Main(string[] args)
         {
             //Start(args);
-            Test(args);
+            Test();
         }
 
         private static void Start(string[] args)
@@ -38,19 +38,21 @@
             }
         }
 
-        private static void Test(string[] args)
+        private static void Test()
         {
             Console.WriteLine("\nTest SubBytes():\n");
-            TestSubBytes(args);
+            TestSubBytes();
             Console.WriteLine("\nTest ShiftRows():\n");
-            TestShiftRows(args);
+            TestShiftRows();
             Console.WriteLine("\nTest MixColumns():\n");
-            TestMixColumns(args);
+            TestMixColumns();
             Console.WriteLine("\nTest AddRoundKey():\n");
-            TestAddRoundKey(args);
+            TestAddRoundKey();
+            Console.WriteLine("\nTest KeySchedule():\n");
+            TestKeySchedule();
         }
 
-        private static void TestSubBytes(string[] args)
+        private static void TestSubBytes()
         {
             /*var chars = args[0].ToCharArray();
             byte[] bytes = new byte[16];
@@ -83,7 +85,7 @@
             Console.WriteLine();
         }
 
-        private static void TestShiftRows(string[] args)
+        private static void TestShiftRows()
         {
             byte[] arr = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
 
@@ -111,7 +113,7 @@
             Console.WriteLine();
         }
 
-        private static void TestMixColumns(string[] args)
+        private static void TestMixColumns()
         {
             byte[] arr = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
 
@@ -139,7 +141,7 @@
             Console.WriteLine();
         }
 
-        private static void TestAddRoundKey(string[] args)
+        private static void TestAddRoundKey()
         {
             byte[] arr = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
             byte[] key = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
@@ -170,7 +172,24 @@
             {
                 Console.Write(i + " ");
             }
-            Console.WriteLine();
+        }
+
+        private static void TestKeySchedule()
+        {
+            byte[] arr = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
+            Console.WriteLine("\nBytes prima:");
+            foreach (var a in arr)
+            {
+                Console.Write(a + " ");
+            }
+
+            byte[] res = Utility.KeySchedule(arr);
+
+            Console.WriteLine("\nBytes dopo:");
+            foreach (var r in res)
+            {
+                Console.Write(r + " ");
+            }
         }
     }
 }
