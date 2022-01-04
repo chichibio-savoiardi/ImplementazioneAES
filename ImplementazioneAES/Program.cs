@@ -132,9 +132,9 @@
             byte[] inv = Decryptor.InvMixColumns(res);
 
             Console.WriteLine("\nBytes reinvertiti:");
-            foreach (var i in inv)
+            foreach (var r in inv)
             {
-                Console.Write(i + " ");
+                Console.Write(r + " ");
             }
             Console.WriteLine();
         }
