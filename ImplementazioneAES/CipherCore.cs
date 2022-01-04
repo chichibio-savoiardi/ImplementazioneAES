@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace ImplementazioneAES
 {
-    internal class CipherCore
+    internal static class CipherCore
     {
-        internal int NK { get; set; } = 4;
-        internal int NB { get; set; } = 4;
-        internal int NR { get; set; } = 10;
+        internal static int NK { get; private set; } = 4;
+        internal static int NB { get; private set; } = 4;
+        internal static int NR { get; private set; } = 10;
 
-        internal string Encrypt()
+        internal static string Encrypt()
         {
             //TODO
             return "";
         }
 
-        internal string Decrypt()
+        internal static string Decrypt()
         {
             //TODO
             return "";

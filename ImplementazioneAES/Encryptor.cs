@@ -62,10 +62,19 @@ namespace ImplementazioneAES
             return output;
         }
 
-        internal static byte[] AddRoundKey(byte[] state, byte[] key)
+        internal static byte[] AddRoundKey(byte[] state, byte[] key, int round)
         {
+            int l = round * CipherCore.NB, sideLen = (int)Math.Sqrt(state.Length);
             byte[] output = new byte[state.Length];
-            //TODO
+            byte[][] xkey = Utility.KeySchedule(key);
+            for (int i = 0; i < sideLen; i++)
+            {
+                // In modo da trattare l'array come se fosse una matrice
+                int row = i * sideLen;
+                byte[] tmp = Utility.XorArray(state[row..(row + sideLen)], xkey[l + i]);
+                // Copio il risultato nell'output, alla riga corrente
+                Buffer.BlockCopy(tmp, 0, output, row, sideLen);
+            }
             return output;
         }
     }

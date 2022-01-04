@@ -143,8 +143,8 @@
 
         private static void TestAddRoundKey()
         {
-            byte[] arr = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
-            byte[] key = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
+            byte[] arr = new byte[] { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
+            byte[] key = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
 
             Console.WriteLine("Key:");
             foreach (var k in key)
@@ -157,7 +157,7 @@
                 Console.Write(a + " ");
             }
 
-            byte[] res = Encryptor.AddRoundKey(arr, key);
+            byte[] res = Encryptor.AddRoundKey(arr, key, 0);
 
             Console.WriteLine("\nBytes dopo:");
             foreach (var r in res)
@@ -165,13 +165,14 @@
                 Console.Write(r + " ");
             }
 
-            byte[] inv = Decryptor.InvAddRoundKey(res, key);
+            byte[] inv = Encryptor.AddRoundKey(res, key, 0);
 
             Console.WriteLine("\nBytes reinvertiti:");
             foreach (var i in inv)
             {
                 Console.Write(i + " ");
             }
+            Console.WriteLine();
         }
 
         private static void TestKeySchedule()
@@ -183,12 +184,16 @@
                 Console.Write(a + " ");
             }
 
-            byte[] res = Utility.KeySchedule(arr);
+            byte[][] res = Utility.KeySchedule(arr);
 
             Console.WriteLine("\nBytes dopo:");
             foreach (var r in res)
             {
-                Console.Write(r + " ");
+                foreach (var i in r)
+                {
+                    Console.Write(i + " ");
+                }
+                Console.WriteLine();
             }
         }
     }
