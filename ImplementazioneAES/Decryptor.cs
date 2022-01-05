@@ -23,15 +23,7 @@ namespace ImplementazioneAES
         //funzione che posta la posizione dei byte verso destra a partire dalla seconda riga per riordinare la matrice 
         internal static byte[] InvShiftRows(byte[] state)
         {
-            int len = state.Length;
-
-            List<byte[]> list = new List<byte[]>(len + 1);
-
-            list.Add(state[0..4]);
-            list.Add(Utility.ShiftRight(state[4..8], 1));
-            list.Add(Utility.ShiftRight(state[8..12], 2));
-            list.Add(Utility.ShiftRight(state[12..16], 3));
-
+            int len = state.Length, sideLen = (int)Math.Sqrt(len);
             byte[] output = new byte[len];
 
             for (int i = 0; i < sideLen; i++)
