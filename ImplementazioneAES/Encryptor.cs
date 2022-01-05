@@ -9,6 +9,7 @@ namespace ImplementazioneAES
 {
     internal static class Encryptor
     {
+        //sostituisce i byte del file con i valori della sbox
         internal static byte[] SubBytes(byte[] state)
         {
             byte[] output = (byte[])state.Clone();
@@ -19,7 +20,7 @@ namespace ImplementazioneAES
             }
             return output;
         }
-
+        //funzione che posta la posizione dei byte verso sinistra a partire dalla seconda riga 
         internal static byte[] ShiftRows(byte[] state)
         {
             int len = state.Length, sideLen = (int)Math.Sqrt(len);
@@ -37,7 +38,7 @@ namespace ImplementazioneAES
 
             return output;
         }
-
+        //moltiplicazione nel campo finito di rijndael
         internal static byte[] MixColumns(byte[] state)
         {
             // Lunghezze comuni
@@ -57,7 +58,7 @@ namespace ImplementazioneAES
             }
 
             byte[] output = new byte[len];
-            Buffer.BlockCopy(data, 0, output, 0, len);
+            Buffer.BlockCopy(data, 0, output, 0, len); //copia il contenuto di data in output
 
             return output;
         }
