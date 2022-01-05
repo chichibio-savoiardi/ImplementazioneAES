@@ -38,7 +38,7 @@ namespace ImplementazioneAES
 
             return output;
         }
-
+        //moltiplicazione nel campo finito di rijndael
         internal static byte[] MixColumns(byte[] state)
         {
             // Lunghezze comuni
@@ -58,7 +58,7 @@ namespace ImplementazioneAES
             }
 
             byte[] output = new byte[len];
-            Buffer.BlockCopy(data, 0, output, 0, len);
+            Buffer.BlockCopy(data, 0, output, 0, len); //copia il contenuto di data in output
 
             return output;
         }
