@@ -40,7 +40,7 @@ namespace ImplementazioneAES
                     Console.WriteLine(HelpStr);
                     break;
                 default:
-                    Console.WriteLine("Operazione non supportata.\n" + Program.HelpStr);
+                    Console.WriteLine("Operazione non supportata.\n" + HelpStr);
                     break;
             }
         }
