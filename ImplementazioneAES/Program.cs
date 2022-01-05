@@ -1,4 +1,11 @@
-﻿namespace ImplementazioneAES
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+
+namespace ImplementazioneAES
 {
     public static class Program
     {
@@ -30,7 +37,7 @@
                     Console.WriteLine("TODO, decrypt file " + args[1]);
                     break;
                 case "help":
-                    Console.WriteLine(Program.HelpStr);
+                    Console.WriteLine(HelpStr);
                     break;
                 default:
                     Console.WriteLine("Operazione non supportata.\n" + Program.HelpStr);
@@ -50,6 +57,10 @@
             TestAddRoundKey();
             Console.WriteLine("\nTest KeySchedule():\n");
             TestKeySchedule();
+            Console.WriteLine("\nTest ToByteArray():\n");
+            TestToByteArray();
+            Console.WriteLine("\nTest Enryption/Decryption():\n");
+            TestEncrypt();
         }
 
         private static void TestSubBytes()
@@ -195,6 +206,42 @@
                 }
                 Console.WriteLine();
             }
+        }
+
+        private static void TestToByteArray()
+        {
+            string a = "abcdefghijklmnopqrstuvwxyz123456789";
+
+            Console.WriteLine(a);
+
+            byte[][] res = CipherCore.StringToByteMatrix(a, 16);
+
+            foreach (var arr in res)
+            {
+                foreach (var item in arr)
+                {
+                    Console.Write(item + " ");
+                }
+                Console.WriteLine();
+            }
+
+            string inv = CipherCore.ByteMatrixToString(res);
+
+            Console.WriteLine(inv);
+        }
+
+        private static void TestEncrypt()
+        {
+            byte[] key = new byte[16] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
+            string keystr = Encoding.Unicode.GetString(key);
+            string str = "my name is giovanni giorgio, but everybody calls me giorgio";
+            string cipherText = CipherCore.Encrypt(str, keystr);
+            string clearText = CipherCore.Decrypt(cipherText, keystr);
+            Console.WriteLine($"text : {str}");
+            Console.WriteLine($"key : {keystr}");
+            Console.WriteLine($"ciphertext : {cipherText}");
+            Console.WriteLine($"cleartext : {clearText}");
+
         }
     }
 }
