@@ -127,6 +127,9 @@ namespace ImplementazioneAES
             return p;
         }
 
+        // Genera 10 chiavi aggiuntive in base a quella data
+        // La funzione e' una copia (quasi) di quella descritta nella specifica di AES
+        // Sezione 5.2, Figura 11 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         internal static byte[][] KeySchedule(byte[] key)
         {
             int N = 4 * CipherCore.NK, B = (CipherCore.NB * (CipherCore.NR + 1)), i_rcon = 1, currPos = N * i_rcon, i = 0;
@@ -164,6 +167,10 @@ namespace ImplementazioneAES
             return w;
         }
 
+        // Nello specifico la linea seguente, illustrata a Sezione 5.2, Figura 11
+        // temp = SubWord(RotWord(temp)) xor Rcon[i/Nk]
+        // E' implementata nella sottostante funzione
+        // Sezione 5.2, Figura 11 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         private static byte[] KeyScheduleCore(byte[] key, int i_rcon)
         {
             byte[] output = (byte[])key[0..4].Clone();
@@ -176,6 +183,7 @@ namespace ImplementazioneAES
             return output;
         }
 
+        // Funzione che prende un'array di byte ed esegue l'operazione XOR (^) sui singoli elementi
         internal static byte[] XorArray(byte[] left, byte[] right)
         {
             int smallest = Math.Min(left.Length, right.Length);
@@ -190,18 +198,3 @@ namespace ImplementazioneAES
         }
     }
 }
-/*
-Buffer.BlockCopy(w, currPos - 4, temp, 0, temp.Length);
-temp = KeyScheduleCore(temp, i_rcon);
-i_rcon++;
-//
-byte[] xor = XorArray(temp, w[(currPos - N)..(currPos - N + temp.Length)]);
-Buffer.BlockCopy(xor, 0, w, currPos, xor.Length);
-currPos += 4;
-//
-for (int j = 0; j < 3; j++)
-{
-    Buffer.BlockCopy(w, currPos - 4, temp, 0, temp.Length);
-    xor = XorArray(temp, w[(currPos - temp.Length)..(currPos)]);
-    Buffer.BlockCopy(xor, 0, w, currPos, xor.Length);
-}*/

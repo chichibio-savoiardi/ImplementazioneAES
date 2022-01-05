@@ -8,7 +8,8 @@ namespace ImplementazioneAES
 {
     internal static class Decryptor
     {
-        //sostituisce i byte applicati con la sbox con i valori della invsbox 
+        //sostituisce i byte applicati con la sbox con i valori della invsbox
+        // Sezione 5.3.1 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         internal static byte[] InvSubBytes(byte[] state)
         {
             byte[] after = (byte[])state.Clone();
@@ -20,7 +21,8 @@ namespace ImplementazioneAES
             return after;
         }
 
-        //funzione che posta la posizione dei byte verso destra a partire dalla seconda riga per riordinare la matrice 
+        //funzione che posta la posizione dei byte verso destra a partire dalla seconda riga per riordinare la matrice
+        // Sezione 5.3.2 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         internal static byte[] InvShiftRows(byte[] state)
         {
             int len = state.Length, sideLen = (int)Math.Sqrt(len);
@@ -39,6 +41,7 @@ namespace ImplementazioneAES
             return output;
         }
         //moltiplicazione nel campo finito di inverse rijndael
+        // Sezione 5.3.3 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         internal static byte[] InvMixColumns(byte[] state)
         {
             // Lunghezze comuni

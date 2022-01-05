@@ -1,4 +1,8 @@
-﻿using System;
+﻿/**
+ * 
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +18,7 @@ namespace ImplementazioneAES
             "Operazioni possibili:\n" +
             "  encrypt <file> : criptazione file\n" +
             "  decrypt <file> : decriptazione file\n";
+
         public static void Main(string[] args)
         {
             //Start(args);
