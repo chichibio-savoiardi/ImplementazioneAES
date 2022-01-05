@@ -13,22 +13,26 @@ namespace ImplementazioneAES
         internal static int NB { get; private set; } = 4;
         internal static int NR { get; private set; } = 10;
 
-        // chiama cipher su tutti i blocchi dell'input
+        // chiama `Cipher()` su tutti i blocchi dell'input
         internal static string Encrypt(string input, string key)
         {
+            // La chiave e l'input sono trasformati in un array di byte
             byte[] bkey = Encoding.Unicode.GetBytes(key);
             byte[][] bytes = StringToByteMatrix(input, 16);
-
+            // L'input e' criptato con la chiave
             for (int i = 0; i < bytes.Length; i++)
             {
                 bytes[i] = Cipher(bytes[i], bkey);
             }
 
+            // L'input è riconvertito in stringa
             string output = ByteMatrixToString(bytes);
             return output;
         }
 
-        // esegue la criptazione su un blocco dell'input
+        // esegue la criptazione su un blocco `input`
+        // Sezione 5.1, Figura 5
+        // Per maggiori informazioni: https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         private static byte[] Cipher(byte[] input, byte[] key)
         {
             byte[] output = (byte[])input.Clone();
@@ -50,8 +54,10 @@ namespace ImplementazioneAES
             return output;
         }
 
+        // chiama `InvCipher()` su tutti i blocchi dell'input
         internal static string Decrypt(string input, string key)
         {
+            // equivalente alla funzione `Encrypt()`, ma al posto di una chiamata a `Cipher` c'e' una chiamata a `InvCipher()`
             byte[] bkey = Encoding.Unicode.GetBytes(key);
             byte[][] bytes = StringToByteMatrix(input, 16);
 
@@ -64,6 +70,8 @@ namespace ImplementazioneAES
             return output;
         }
 
+        // esegue la decriptazione su un blocco `input`
+        // Sezione 5.3, Figura 12 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         private static byte[] InvCipher(byte[] input, byte[] key)
         {
             byte[] output = (byte[])input.Clone();

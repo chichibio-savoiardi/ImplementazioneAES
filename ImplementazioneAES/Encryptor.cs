@@ -10,6 +10,7 @@ namespace ImplementazioneAES
     internal static class Encryptor
     {
         //sostituisce i byte del file con i valori della sbox
+        // Sezione 5.1.1 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         internal static byte[] SubBytes(byte[] state)
         {
             byte[] output = (byte[])state.Clone();
@@ -20,7 +21,8 @@ namespace ImplementazioneAES
             }
             return output;
         }
-        //funzione che posta la posizione dei byte verso sinistra a partire dalla seconda riga 
+        //funzione che posta la posizione dei byte verso sinistra a partire dalla seconda riga
+        // Sezione 5.1.2 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         internal static byte[] ShiftRows(byte[] state)
         {
             int len = state.Length, sideLen = (int)Math.Sqrt(len);
@@ -39,6 +41,7 @@ namespace ImplementazioneAES
             return output;
         }
         //moltiplicazione nel campo finito di rijndael
+        // Sezione 5.1.3 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         internal static byte[] MixColumns(byte[] state)
         {
             // Lunghezze comuni
@@ -63,8 +66,13 @@ namespace ImplementazioneAES
             return output;
         }
 
+        // Esegue lo XOR tra lo `state` e la chiave espansa
+        // Sezione 5.1.4 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         internal static byte[] AddRoundKey(byte[] state, byte[] key, int round)
         {
+            // Preparazione dati
+            // `l` e' descritto nella specifica di AES
+            // `sideLen` e' il la lunghezza del lato dello `state` se fosse interpretato come matrice
             int l = round * CipherCore.NB, sideLen = (int)Math.Sqrt(state.Length);
             byte[] output = new byte[state.Length];
             byte[][] xkey = Utility.KeySchedule(key);
@@ -72,6 +80,7 @@ namespace ImplementazioneAES
             {
                 // In modo da trattare l'array come se fosse una matrice
                 int row = i * sideLen;
+                // Xor dello state colonna per colonna
                 byte[] tmp = Utility.XorArray(state[row..(row + sideLen)], xkey[l + i]);
                 // Copio il risultato nell'output, alla riga corrente
                 Buffer.BlockCopy(tmp, 0, output, row, sideLen);
