@@ -2,7 +2,7 @@ namespace ImplementazioneAES
 {
     internal static class Utility
     {
-        //è la matrice che fornisce le sostituzioni per la funzione SubBytes
+        //e' la matrice che fornisce le sostituzioni per la funzione SubBytes
         internal static byte[] Sbox { get; } = new byte[256] {
                 0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
                 0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,
@@ -20,7 +20,7 @@ namespace ImplementazioneAES
                 0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e,
                 0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
                 0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16};
-        //è la matrice che applicata al invSubBytes restituisce i valori del file
+        //e' la matrice che applicata al invSubBytes restituisce i valori del file
         internal static byte[] InvSbox { get; } = new byte[256] {
                 0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3, 0x9e, 0x81, 0xf3, 0xd7, 0xfb,
                 0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f, 0xff, 0x87, 0x34, 0x8e, 0x43, 0x44, 0xc4, 0xde, 0xe9, 0xcb,
@@ -127,33 +127,41 @@ namespace ImplementazioneAES
             return p;
         }
 
-        internal static byte[] KeySchedule(byte[] key)
+        internal static byte[][] KeySchedule(byte[] key)
         {
-            int N = 16, B = 176, i_rcon = 1, currPos = N * i_rcon, index = 0;
-            byte[] xkey = new byte[B];
-            byte[] tmp = new byte[4];
+            int N = 4 * CipherCore.NK, B = (CipherCore.NB * (CipherCore.NR + 1)), i_rcon = 1, currPos = N * i_rcon, i = 0;
+            int wordLen = 4;
+            byte[][] w = new byte[B][];
+            byte[] temp = new byte[wordLen];
 
-            Buffer.BlockCopy(key, 0, xkey, 0, N);
-
-            for (int i = N; i < B; i++)
+            while (i < CipherCore.NK)
             {
-                Buffer.BlockCopy(xkey, currPos - 4, tmp, 0, tmp.Length);
-                tmp = KeyScheduleCore(tmp, i_rcon);
-                i_rcon++;
-                //
-                byte[] xor = XorArray(tmp, xkey[(currPos - N)..(currPos - N + tmp.Length)]);
-                Buffer.BlockCopy(xor, 0, xkey, currPos, xor.Length);
-                currPos += 4;
-                //
-                for (int j = 0; j < 3; j++)
+                w[i] = new byte[] { key[4 * i], key[4 * i + 1], key[4 * i + 2], key[4 * i + 3] };
+                i++;
+            }
+            i = CipherCore.NK;
+
+            while (i < B)
+            {
+                Buffer.BlockCopy(w[i - 1], 0, temp, 0, wordLen);
+
+                if ((i % CipherCore.NK) == 0)
                 {
-                    Buffer.BlockCopy(xkey, currPos - 4, tmp, 0, tmp.Length);
-                    xor = XorArray(tmp, xkey[(currPos - tmp.Length)..(currPos)]);
-                    Buffer.BlockCopy(xor, 0, xkey, currPos, xor.Length);
+                    temp = KeyScheduleCore(temp, i / CipherCore.NK);
                 }
+                else if ((CipherCore.NK > 6) && ((i % CipherCore.NK) == 4))
+                {
+                    // Sostituzione con sbox, fatta con for perche' temp e' un array
+                    for (int j = 0; j < temp.Length; j++)
+                    {
+                        temp[i] = Sbox[temp[i]];
+                    }
+                }
+                w[i] = XorArray(w[i - CipherCore.NK], temp);
+                i++;
             }
 
-            return xkey;
+            return w;
         }
 
         private static byte[] KeyScheduleCore(byte[] key, int i_rcon)
