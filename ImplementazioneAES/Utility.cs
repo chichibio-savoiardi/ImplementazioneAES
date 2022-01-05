@@ -124,33 +124,41 @@ namespace ImplementazioneAES
             return p;
         }
 
-        internal static byte[] KeySchedule(byte[] key)
+        internal static byte[][] KeySchedule(byte[] key)
         {
-            int N = 16, B = 176, i_rcon = 1, currPos = N * i_rcon, index = 0;
-            byte[] xkey = new byte[B];
-            byte[] tmp = new byte[4];
+            int N = 4 * CipherCore.NK, B = (CipherCore.NB * (CipherCore.NR + 1)), i_rcon = 1, currPos = N * i_rcon, i = 0;
+            int wordLen = 4;
+            byte[][] w = new byte[B][];
+            byte[] temp = new byte[wordLen];
 
-            Buffer.BlockCopy(key, 0, xkey, 0, N);
-
-            for (int i = N; i < B; i++)
+            while (i < CipherCore.NK)
             {
-                Buffer.BlockCopy(xkey, currPos - 4, tmp, 0, tmp.Length);
-                tmp = KeyScheduleCore(tmp, i_rcon);
-                i_rcon++;
-                //
-                byte[] xor = XorArray(tmp, xkey[(currPos - N)..(currPos - N + tmp.Length)]);
-                Buffer.BlockCopy(xor, 0, xkey, currPos, xor.Length);
-                currPos += 4;
-                //
-                for (int j = 0; j < 3; j++)
+                w[i] = new byte[] { key[4 * i], key[4 * i + 1], key[4 * i + 2], key[4 * i + 3] };
+                i++;
+            }
+            i = CipherCore.NK;
+
+            while (i < B)
+            {
+                Buffer.BlockCopy(w[i - 1], 0, temp, 0, wordLen);
+
+                if ((i % CipherCore.NK) == 0)
                 {
-                    Buffer.BlockCopy(xkey, currPos - 4, tmp, 0, tmp.Length);
-                    xor = XorArray(tmp, xkey[(currPos - tmp.Length)..(currPos)]);
-                    Buffer.BlockCopy(xor, 0, xkey, currPos, xor.Length);
+                    temp = KeyScheduleCore(temp, i / CipherCore.NK);
                 }
+                else if ((CipherCore.NK > 6) && ((i % CipherCore.NK) == 4))
+                {
+                    // Sostituzione con sbox, fatta con for perche' temp è un array
+                    for (int j = 0; j < temp.Length; j++)
+                    {
+                        temp[i] = Sbox[temp[i]];
+                    }
+                }
+                w[i] = XorArray(w[i - CipherCore.NK], temp);
+                i++;
             }
 
-            return xkey;
+            return w;
         }
 
         private static byte[] KeyScheduleCore(byte[] key, int i_rcon)
@@ -179,3 +187,18 @@ namespace ImplementazioneAES
         }
     }
 }
+/*
+Buffer.BlockCopy(w, currPos - 4, temp, 0, temp.Length);
+temp = KeyScheduleCore(temp, i_rcon);
+i_rcon++;
+//
+byte[] xor = XorArray(temp, w[(currPos - N)..(currPos - N + temp.Length)]);
+Buffer.BlockCopy(xor, 0, w, currPos, xor.Length);
+currPos += 4;
+//
+for (int j = 0; j < 3; j++)
+{
+    Buffer.BlockCopy(w, currPos - 4, temp, 0, temp.Length);
+    xor = XorArray(temp, w[(currPos - temp.Length)..(currPos)]);
+    Buffer.BlockCopy(xor, 0, w, currPos, xor.Length);
+}*/

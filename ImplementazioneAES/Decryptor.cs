@@ -68,10 +68,5 @@ namespace ImplementazioneAES
 
             return output;
         }
-        internal static byte[] InvAddRoundKey(byte[] state, byte[] key)
-        {
-            //TODO
-            return state;
-        }
     }
 }
