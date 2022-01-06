@@ -1,5 +1,6 @@
-﻿/**
- * 
+﻿/* ---
+ * TODO:
+ * Fare si che la key schedule non sia calcolata ogni volta, ma solo una volta, dentro Encrypt()/Decrypt()
  */
 
 using System;
@@ -64,7 +65,9 @@ namespace ImplementazioneAES
             TestKeySchedule();
             Console.WriteLine("\nTest ToByteArray():\n");
             TestToByteArray();
-            Console.WriteLine("\nTest Enryption/Decryption():\n");
+            Console.WriteLine("\nTest Cipher:\n");
+            TestCipher();
+            Console.WriteLine("\nTest Encrypt:\n");
             TestEncrypt();
         }
 
@@ -103,7 +106,7 @@ namespace ImplementazioneAES
 
         private static void TestShiftRows()
         {
-            byte[] arr = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
+            byte[] arr = new byte[] { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
 
             Console.WriteLine("Bytes prima:");
             foreach (var a in arr)
@@ -131,7 +134,7 @@ namespace ImplementazioneAES
 
         private static void TestMixColumns()
         {
-            byte[] arr = new byte[] { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf };
+            byte[] arr = new byte[] { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
 
             Console.WriteLine("Bytes prima:");
             foreach (var a in arr)
@@ -173,7 +176,7 @@ namespace ImplementazioneAES
                 Console.Write(a + " ");
             }
 
-            byte[] res = Encryptor.AddRoundKey(arr, key, 0);
+            byte[] res = Encryptor.AddRoundKey(arr, key);
 
             Console.WriteLine("\nBytes dopo:");
             foreach (var r in res)
@@ -181,7 +184,7 @@ namespace ImplementazioneAES
                 Console.Write(r + " ");
             }
 
-            byte[] inv = Encryptor.AddRoundKey(res, key, 0);
+            byte[] inv = Encryptor.AddRoundKey(res, key);
 
             Console.WriteLine("\nBytes reinvertiti:");
             foreach (var i in inv)
@@ -219,7 +222,7 @@ namespace ImplementazioneAES
 
             Console.WriteLine(a);
 
-            byte[][] res = CipherCore.StringToByteMatrix(a, 16);
+            byte[][] res = Utility.StringToByteMatrix(a, 16);
 
             foreach (var arr in res)
             {
@@ -230,23 +233,34 @@ namespace ImplementazioneAES
                 Console.WriteLine();
             }
 
-            string inv = CipherCore.ByteMatrixToString(res);
+            string inv = Utility.ByteMatrixToString(res);
 
             Console.WriteLine(inv);
         }
 
+        private static void TestCipher()
+        {
+            byte[] arr = new byte[16] { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
+            byte[] key = new byte[16] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
+            byte[][] xkey = Utility.KeySchedule(key);
+            Console.WriteLine(arr.ArrayToString());
+            byte[] res = CipherCore.Cipher(arr, xkey);
+            Console.WriteLine(res.ArrayToString());
+            byte[] inv = CipherCore.InvCipher(res, xkey);
+            Console.WriteLine(inv.ArrayToString());
+        }
+
         private static void TestEncrypt()
         {
+            string str = "my name is giovanni giorgio";
             byte[] key = new byte[16] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
-            string keystr = Encoding.Unicode.GetString(key);
-            string str = "my name is giovanni giorgio, but everybody calls me giorgio";
+            string keystr = Encoding.Latin1.GetString(key);
             string cipherText = CipherCore.Encrypt(str, keystr);
             string clearText = CipherCore.Decrypt(cipherText, keystr);
-            Console.WriteLine($"text : {str}");
-            Console.WriteLine($"key : {keystr}");
-            Console.WriteLine($"ciphertext : {cipherText}");
-            Console.WriteLine($"cleartext : {clearText}");
-
+            Console.WriteLine($"key : {key.ArrayToString()}");
+            Console.WriteLine($"str : {str}");
+            Console.WriteLine($"cipherText : {cipherText}");
+            Console.WriteLine($"clearText : {clearText}");
         }
     }
 }

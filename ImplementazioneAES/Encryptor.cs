@@ -52,7 +52,7 @@ namespace ImplementazioneAES
             byte[,] stateMatrix = new byte[sideLen, sideLen];
             Buffer.BlockCopy(state, 0, stateMatrix, 0, len);
 
-            for (int c = 0; c < 4; c++)
+            for (int c = 0; c < sideLen; c++)
             {
                 data[0, c] = (byte)(Utility.GMul(0x02, stateMatrix[0, c]) ^ Utility.GMul(0x03, stateMatrix[1, c]) ^ stateMatrix[2, c] ^ stateMatrix[3, c]);
                 data[1, c] = (byte)(stateMatrix[0, c] ^ Utility.GMul(0x02, stateMatrix[1, c]) ^ Utility.GMul(0x03, stateMatrix[2, c]) ^ stateMatrix[3, c]);
@@ -68,24 +68,9 @@ namespace ImplementazioneAES
 
         // Esegue lo XOR tra lo `state` e la chiave espansa
         // Sezione 5.1.4 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
-        internal static byte[] AddRoundKey(byte[] state, byte[] key, int round)
+        internal static byte[] AddRoundKey(byte[] state, byte[] key)
         {
-            // Preparazione dati
-            // `l` e' descritto nella specifica di AES
-            // `sideLen` e' il la lunghezza del lato dello `state` se fosse interpretato come matrice
-            int l = round * CipherCore.NB, sideLen = (int)Math.Sqrt(state.Length);
-            byte[] output = new byte[state.Length];
-            byte[][] xkey = Utility.KeySchedule(key);
-            for (int i = 0; i < sideLen; i++)
-            {
-                // In modo da trattare l'array come se fosse una matrice
-                int row = i * sideLen;
-                // Xor dello state colonna per colonna
-                byte[] tmp = Utility.XorArray(state[row..(row + sideLen)], xkey[l + i]);
-                // Copio il risultato nell'output, alla riga corrente
-                Buffer.BlockCopy(tmp, 0, output, row, sideLen);
-            }
-            return output;
+            return Utility.XorArray(state, key);;
         }
     }
 }
