@@ -17,7 +17,7 @@ namespace ImplementazioneAES
         internal static string Encrypt(string input, string key)
         {
             // La chiave e l'input sono trasformati in un array di byte
-            byte[] bkey = Encoding.Latin1.GetBytes(key);
+            byte[] bkey = Encoding.Unicode.GetBytes(key);
             byte[][] xkey = Utility.KeySchedule(bkey);
             byte[][] bytes = Utility.StringToByteMatrix(input, 16);
             // L'input e' criptato con la chiave
@@ -59,7 +59,7 @@ namespace ImplementazioneAES
         internal static string Decrypt(string input, string key)
         {
             // equivalente alla funzione `Encrypt()`, ma al posto di una chiamata a `Cipher` c'e' una chiamata a `InvCipher()`
-            byte[] bkey = Encoding.Latin1.GetBytes(key);
+            byte[] bkey = Encoding.Unicode.GetBytes(key);
             byte[][] xkey = Utility.KeySchedule(bkey);
             byte[][] bytes = Utility.StringToByteMatrix(input, 16);
 

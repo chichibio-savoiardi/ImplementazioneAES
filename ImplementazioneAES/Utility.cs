@@ -75,6 +75,16 @@ namespace ImplementazioneAES
             return output;
         }
 
+        public static T[] Concat<T>(this T[] x, T[] y)
+        {
+            if (x == null) throw new ArgumentNullException("x");
+            if (y == null) throw new ArgumentNullException("y");
+            int oldLen = x.Length;
+            Array.Resize<T>(ref x, x.Length + y.Length);
+            Array.Copy(y, 0, x, oldLen, y.Length);
+            return x;
+        }
+
         internal static byte[] ShiftLeft(byte[] arr, int times)
         {
             byte[] ShiftLeftOne(byte[] arr)
@@ -200,11 +210,11 @@ namespace ImplementazioneAES
             {
                 int row = i * oldLen;
                 byte[] temp = new byte[newLen];
-                byte[] cluster = new byte[newLen];
+                byte[] cluster = new byte[0];
                 for (int j = 0; j < oldLen; j++)
                 {
                     int jrow = j * oldLen;
-                    Buffer.BlockCopy(w[row + j], 0, cluster[jrow..(jrow + oldLen)], 0, oldLen);
+                    cluster = cluster.Concat(w[row + j]);
                 }
                 Buffer.BlockCopy(cluster, 0, temp, 0, newLen);
                 output[i] = temp;
@@ -229,6 +239,11 @@ namespace ImplementazioneAES
             return output;
         }
 
+        private static int mod(int x, int m)
+        {
+            return (x % m + m) % m;
+        }
+
         // Funzione che prende un'array di byte ed esegue l'operazione XOR (^) sui singoli elementi
         internal static byte[] XorArray(byte[] left, byte[] right)
         {
@@ -246,7 +261,7 @@ namespace ImplementazioneAES
         // divide l'input in blocchi di lunghezza arrLen
         internal static byte[][] StringToByteMatrix(string input, int arrLen)
         {
-            byte[] bytes = Encoding.Latin1.GetBytes(input);
+            byte[] bytes = Encoding.Unicode.GetBytes(input);
             int len;
 
             if (bytes.Length % arrLen == 0)
@@ -278,7 +293,7 @@ namespace ImplementazioneAES
             string output = "";
             foreach (var arr in bytes)
             {
-                output += Encoding.Latin1.GetString(arr);
+                output += Encoding.Unicode.GetString(arr);
             }
             return output;
         }

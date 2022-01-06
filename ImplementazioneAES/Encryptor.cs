@@ -21,7 +21,9 @@ namespace ImplementazioneAES
             }
             return output;
         }
-        //funzione che posta la posizione dei byte verso sinistra a partire dalla seconda riga
+
+        // FIXME la funzione tratta l'array come se fosse in row-major order invece che column-major order
+        //funzione che sposta la posizione dei byte verso sinistra a partire dalla seconda riga
         // Sezione 5.1.2 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         internal static byte[] ShiftRows(byte[] state)
         {
