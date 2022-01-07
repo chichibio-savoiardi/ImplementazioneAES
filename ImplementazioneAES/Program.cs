@@ -25,16 +25,15 @@ namespace ImplementazioneAES
 
         public static void Main(string[] args)
         {
-            //args = new string[] { "encrypt", "./test.txt", "hobbit" };
-            //Start(args);
-            Tests.Test();
+            Start(args);
+            //Tests.Test();
         }
 
         private static void Start(string[] args)
         {
             if (args.Length < 3)
             {
-                Console.WriteLine("Troppi pochi argomenti, il programma necessita dell'operazione scelta, di un file e di una password.\nEs: '.\\ImplementazioneAES.exe encrypt file.txt abc123'\n" + Program.HelpStr);
+                Console.WriteLine("Troppi pochi argomenti, il programma necessita dell'operazione scelta, di un file e di una password.\n" + Program.HelpStr);
                 return;
             }
 

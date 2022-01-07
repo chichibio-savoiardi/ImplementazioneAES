@@ -331,7 +331,7 @@ namespace ImplementazioneAES
         // trasforma una matrice 2D di byte in un'array di byte
         internal static byte[] ByteMatrixToArray(byte[][] bytes)
         {
-            byte[] output = new byte[bytes.Length * bytes[0].Length];
+            byte[] output = new byte[0];
             foreach (var arr in bytes)
             {
                 output = output.Concat(arr);

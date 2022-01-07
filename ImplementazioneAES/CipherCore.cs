@@ -12,7 +12,7 @@ namespace ImplementazioneAES
         internal static int NK { get; private set; } = 4;
         internal static int NB { get; private set; } = 4;
         internal static int NR { get; private set; } = 10;
-        internal static Encoding ChoosenEncoding { get; private set; } = Encoding.UTF8;
+        internal static Encoding ChoosenEncoding { get; private set; } = Encoding.Default;
 
         // chiama `Cipher()` su tutti i blocchi dell'input
         internal static byte[] Encrypt(byte[] input, byte[] key)
