@@ -262,7 +262,7 @@ namespace ImplementazioneAES
         // divide l'input in blocchi di lunghezza arrLen
         internal static byte[][] StringToByteMatrix(string input, int arrLen)
         {
-            byte[] bytes = Encoding.Unicode.GetBytes(input);
+            byte[] bytes = CipherCore.ChoosenEncoding.GetBytes(input);
             int len;
 
             if (bytes.Length % arrLen == 0)
@@ -294,7 +294,47 @@ namespace ImplementazioneAES
             string output = "";
             foreach (var arr in bytes)
             {
-                output += Encoding.Unicode.GetString(arr);
+                output += CipherCore.ChoosenEncoding.GetString(arr);
+            }
+            return output;
+        }
+
+        // trasforma un'array di byte in una matrice 2D di byte
+        internal static byte[][] ByteArrayToMatrix(byte[] input, int arrLen)
+        {
+            byte[] bytes = (byte[])input.Clone();
+            int len;
+
+            if (bytes.Length % arrLen == 0)
+            {
+                len = bytes.Length / arrLen;
+            }
+            else
+            {
+                int newLen = bytes.Length + (arrLen - (bytes.Length % arrLen));
+                Array.Resize(ref bytes, newLen);
+                len = bytes.Length / arrLen;
+            }
+
+            byte[][] output = new byte[len][];
+
+            for (int i = 0; i < len; i++)
+            {
+                int currPos = i * arrLen;
+                output[i] = new byte[arrLen];
+                Array.Copy(bytes, currPos, output[i], 0, arrLen);
+            }
+
+            return output;
+        }
+
+        // trasforma una matrice 2D di byte in un'array di byte
+        internal static byte[] ByteMatrixToArray(byte[][] bytes)
+        {
+            byte[] output = new byte[bytes.Length * bytes[0].Length];
+            foreach (var arr in bytes)
+            {
+                output = output.Concat(arr);
             }
             return output;
         }
@@ -305,14 +345,6 @@ namespace ImplementazioneAES
             T[,] mat = new T[sideLen, sideLen];
 
             Buffer.BlockCopy(arr, 0, mat, 0, arr.Length);
-            /*
-            for (int i = 0; i < sideLen; i++)
-            {
-                for (int j = 0; j < sideLen; j++)
-                {
-                    mat[i, j] = arr[k++];
-                }
-            }*/
 
             return mat;
         }

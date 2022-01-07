@@ -16,15 +16,15 @@ namespace ImplementazioneAES
     {
         public static string HelpStr { get; private set; } =
             "Strumento di criptazione e decriptazione di file con algoritmo AES128.\n" +
-            "Utilizzo : ./ImplementazioneAES [COMMAND] [FILENAME] [PASSWD]\n" +
+            "Utilizzo : ./ImplementazioneAES.exe [COMMAND] [FILENAME] [PASSWD]\n" +
             "Comandi possibili:\n" +
             "  encrypt [FILENAME] [PASSWD] : criptazione file\n" +
             "  decrypt [FILENAME] [PASSWD] : decriptazione file\n";
 
         public static void Main(string[] args)
         {
-            //Start(args);
-            Test();
+            Start(args);
+            //Test();
         }
 
         private static void Start(string[] args)
@@ -35,13 +35,15 @@ namespace ImplementazioneAES
                 return;
             }
 
+            Console.WriteLine("Wait...");
+
             switch (args[0])
             {
                 case "encrypt":
                     StartEncryption(args);
                     break;
                 case "decrypt":
-                    Console.WriteLine("TODO, decrypt file " + args[1]);
+                    StartDecryption(args);
                     break;
                 case "help":
                     Console.WriteLine(HelpStr);
@@ -50,16 +52,26 @@ namespace ImplementazioneAES
                     Console.WriteLine("Operazione non supportata.\n" + HelpStr);
                     break;
             }
+
+            Console.WriteLine("OK");
         }
 
         private static void StartEncryption(string[] args)
         {
-            MD5 md5 = MD5.Create();
+            byte[] file = File.ReadAllBytes(args[1]);
+            // Prendo l'hash MD5 della chiave
+            byte[] key = MD5.Create().ComputeHash(CipherCore.ChoosenEncoding.GetBytes(args[2]));
+            byte[] cipherText = CipherCore.Encrypt(file, key);
+            File.WriteAllBytes(args[1] + ".aes", cipherText);
         }
 
         private static void StartDecryption(string[] args)
         {
-            MD5 md5 = MD5.Create();
+            byte[] file = File.ReadAllBytes(args[1]);
+            // Prendo l'hash MD5 della chiave
+            byte[] key = MD5.Create().ComputeHash(CipherCore.ChoosenEncoding.GetBytes(args[2]));
+            byte[] cipherText = CipherCore.Decrypt(file, key);
+            File.WriteAllBytes(args[1][0..(args[1].Length - 4)], cipherText);
         }
 
         public static string CreateMD5(string input)
@@ -79,7 +91,7 @@ namespace ImplementazioneAES
                 return sb.ToString();
             }
         }
-
+        /*
         private static void Test()
         {
             Console.WriteLine("\nTest SubBytes():\n");
@@ -122,7 +134,7 @@ namespace ImplementazioneAES
             foreach (var r in res)
             {
                 Console.Write(r + " ");
-            }*/
+            }
 
             byte en = Encryptor.SubBytes(new byte[] { 0x9a })[0];
             byte de = Decryptor.InvSubBytes(new byte[] { en })[0];
@@ -302,6 +314,6 @@ namespace ImplementazioneAES
             Console.WriteLine($"str : {str}");
             Console.WriteLine($"cipherText : {cipherText}");
             Console.WriteLine($"clearText : {clearText}");
-        }
+        }*/
     }
 }
