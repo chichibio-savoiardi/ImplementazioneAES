@@ -17,7 +17,8 @@ namespace ImplementazioneAES
         // chiama `Cipher()` su tutti i blocchi dell'input
         internal static byte[] Encrypt(byte[] input, byte[] key)
         {
-            // La chiave e l'input sono trasformati in un array di byte
+            // La chiave viene espansa.
+            // l'input e' trasformati in una matrice di byte[n][16]
             byte[][] xkey = Utility.KeySchedule(key);
             byte[][] bytes = Utility.ByteArrayToMatrix(input, 16);
             // L'input e' criptato con la chiave
@@ -26,7 +27,7 @@ namespace ImplementazioneAES
                 bytes[i] = Cipher(bytes[i], xkey);
             }
 
-            // L'input è riconvertito in stringa
+            // L'input è riconvertito in array
             byte[] output = Utility.ByteMatrixToArray(bytes);
             return output;
         }
@@ -58,16 +59,17 @@ namespace ImplementazioneAES
         // chiama `InvCipher()` su tutti i blocchi dell'input
         internal static byte[] Decrypt(byte[] input, byte[] key)
         {
-            // La chiave e l'input sono trasformati in un array di byte
+            // La chiave viene espansa.
+            // l'input e' trasformati in una matrice di byte[n][16]
             byte[][] xkey = Utility.KeySchedule(key);
             byte[][] bytes = Utility.ByteArrayToMatrix(input, 16);
-            // L'input e' criptato con la chiave
+            // L'input e' decriptato con la chiave
             for (int i = 0; i < bytes.Length; i++)
             {
                 bytes[i] = InvCipher(bytes[i], xkey);
             }
 
-            // L'input è riconvertito in stringa
+            // L'input è riconvertito in array
             byte[] output = Utility.ByteMatrixToArray(bytes);
             return output;
         }
