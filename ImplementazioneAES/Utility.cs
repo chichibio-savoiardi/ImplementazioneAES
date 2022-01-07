@@ -65,12 +65,12 @@ namespace ImplementazioneAES
         //spostamento a sinistra dei byte in base alla variabile times che varia in base alla riga
 
         // Dato un'array, fornisce una stringa con gli elementi che lo compongono
-        internal static string ArrayToString(this Array arr)
+        internal static string ArrayToString(this byte[] arr, string mod = "")
         {
             string output = "";
             foreach (var item in arr)
             {
-                output += $"{item} ";
+                output += item.ToString(mod) + " ";
             }
             return output;
         }
@@ -85,6 +85,7 @@ namespace ImplementazioneAES
             return x;
         }
 
+        // ShiftDown, puo essere considerata ShiftLeft se si ordina in colonne invece che righe
         internal static byte[] ShiftLeft(byte[] arr, int times)
         {
             byte[] ShiftLeftOne(byte[] arr)
@@ -296,6 +297,37 @@ namespace ImplementazioneAES
                 output += Encoding.Unicode.GetString(arr);
             }
             return output;
+        }
+
+        internal static T[,] To2DArray<T>(this T[] arr)
+        {
+            int sideLen = (int)Math.Sqrt(arr.Length);
+            T[,] mat = new T[sideLen, sideLen];
+
+            Buffer.BlockCopy(arr, 0, mat, 0, arr.Length);
+            /*
+            for (int i = 0; i < sideLen; i++)
+            {
+                for (int j = 0; j < sideLen; j++)
+                {
+                    mat[i, j] = arr[k++];
+                }
+            }*/
+
+            return mat;
+        }
+
+        internal static T[] To1DArray<T>(this T[,] mat)
+        {
+            T[] arr = new T[mat.GetLength(0) * mat.GetLength(1)];
+            int i = 0;
+
+            foreach (var item in mat)
+            {
+                arr[i++] = item;
+            }
+
+            return arr;
         }
     }
 }

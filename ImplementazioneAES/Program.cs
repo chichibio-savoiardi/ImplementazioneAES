@@ -16,9 +16,10 @@ namespace ImplementazioneAES
     {
         public static string HelpStr { get; private set; } =
             "Strumento di criptazione e decriptazione di file con algoritmo AES128.\n" +
-            "Operazioni possibili:\n" +
-            "  encrypt <file> : criptazione file\n" +
-            "  decrypt <file> : decriptazione file\n";
+            "Utilizzo : ./ImplementazioneAES [COMMAND] [FILENAME] [PASSWD]\n" +
+            "Comandi possibili:\n" +
+            "  encrypt [FILENAME] [PASSWD] : criptazione file\n" +
+            "  decrypt [FILENAME] [PASSWD] : decriptazione file\n";
 
         public static void Main(string[] args)
         {
@@ -28,16 +29,16 @@ namespace ImplementazioneAES
 
         private static void Start(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length < 3)
             {
-                Console.WriteLine("Troppi pochi argomenti, il programma necessita dell'operazione scelta e di un file.\nEs: '.\\ImplementazioneAES.exe encrypt file.txt'\n" + Program.HelpStr);
+                Console.WriteLine("Troppi pochi argomenti, il programma necessita dell'operazione scelta, di un file e di una password.\nEs: '.\\ImplementazioneAES.exe encrypt file.txt abc123'\n" + Program.HelpStr);
                 return;
             }
 
             switch (args[0])
             {
                 case "encrypt":
-                    Console.WriteLine("TODO, encrypt file " + args[1]);
+                    StartEncryption(args);
                     break;
                 case "decrypt":
                     Console.WriteLine("TODO, decrypt file " + args[1]);
@@ -48,6 +49,34 @@ namespace ImplementazioneAES
                 default:
                     Console.WriteLine("Operazione non supportata.\n" + HelpStr);
                     break;
+            }
+        }
+
+        private static void StartEncryption(string[] args)
+        {
+            MD5 md5 = MD5.Create();
+        }
+
+        private static void StartDecryption(string[] args)
+        {
+            MD5 md5 = MD5.Create();
+        }
+
+        public static string CreateMD5(string input)
+        {
+            // Use input string to calculate MD5 hash
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] inputBytes = Encoding.Unicode.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                // Convert the byte array to hexadecimal string
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("X2"));
+                }
+                return sb.ToString();
             }
         }
 
@@ -67,6 +96,7 @@ namespace ImplementazioneAES
             TestToByteArray();
             Console.WriteLine("\nTest Cipher:\n");
             TestCipher();
+            TestCipher1();
             Console.WriteLine("\nTest Encrypt:\n");
             TestEncrypt();
         }
@@ -243,11 +273,22 @@ namespace ImplementazioneAES
             byte[] arr = new byte[16] { 0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d, 0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34 };
             byte[] key = new byte[16] { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };
             byte[][] xkey = Utility.KeySchedule(key);
-            Console.WriteLine(arr.ArrayToString());
+            Console.WriteLine(arr.ArrayToString("X"));
             byte[] res = CipherCore.Cipher(arr, xkey);
-            Console.WriteLine(res.ArrayToString());
+            Console.WriteLine(res.ArrayToString("X"));
             byte[] inv = CipherCore.InvCipher(res, xkey);
-            Console.WriteLine(inv.ArrayToString());
+            Console.WriteLine(inv.ArrayToString("X"));
+        }
+        private static void TestCipher1()
+        {
+            byte[] arr = new byte[16] { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
+            byte[] key = new byte[16] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
+            byte[][] xkey = Utility.KeySchedule(key);
+            Console.WriteLine(arr.ArrayToString("X"));
+            byte[] res = CipherCore.Cipher(arr, xkey);
+            Console.WriteLine(res.ArrayToString("X"));
+            byte[] inv = CipherCore.InvCipher(res, xkey);
+            Console.WriteLine(inv.ArrayToString("X"));
         }
 
         private static void TestEncrypt()

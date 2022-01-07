@@ -78,9 +78,9 @@ namespace ImplementazioneAES
         {
             byte[] output = (byte[])input.Clone();
 
-            output = Encryptor.AddRoundKey(output, key[0]);
+            output = Encryptor.AddRoundKey(output, key[NR]);
 
-            for (int i = 1; i < NR; i++)
+            for (int i = NR - 1; i > 0; i--)
             {
                 output = Decryptor.InvShiftRows(output);
                 output = Decryptor.InvSubBytes(output);
@@ -90,7 +90,7 @@ namespace ImplementazioneAES
             
             output = Decryptor.InvShiftRows(output);
             output = Decryptor.InvSubBytes(output);
-            output = Encryptor.AddRoundKey(output, key[NR]);
+            output = Encryptor.AddRoundKey(output, key[0]);
 
             return output;
         }
