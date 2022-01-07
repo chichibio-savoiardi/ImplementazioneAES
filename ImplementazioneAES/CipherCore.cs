@@ -22,10 +22,15 @@ namespace ImplementazioneAES
             byte[][] xkey = Utility.KeySchedule(key);
             byte[][] bytes = Utility.ByteArrayToMatrix(input, 16);
             // L'input e' criptato con la chiave
+            Parallel.For(0, bytes.Length, i =>
+            {
+                bytes[i] = Cipher(bytes[i], xkey);
+            });
+            /*
             for (int i = 0; i < bytes.Length; i++)
             {
                 bytes[i] = Cipher(bytes[i], xkey);
-            }
+            }*/
 
             // L'input è riconvertito in array
             byte[] output = Utility.ByteMatrixToArray(bytes);
@@ -64,10 +69,15 @@ namespace ImplementazioneAES
             byte[][] xkey = Utility.KeySchedule(key);
             byte[][] bytes = Utility.ByteArrayToMatrix(input, 16);
             // L'input e' decriptato con la chiave
+            Parallel.For(0, bytes.Length, i =>
+            {
+                bytes[i] = InvCipher(bytes[i], xkey);
+            });
+            /*
             for (int i = 0; i < bytes.Length; i++)
             {
                 bytes[i] = InvCipher(bytes[i], xkey);
-            }
+            }*/
 
             // L'input è riconvertito in array
             byte[] output = Utility.ByteMatrixToArray(bytes);
