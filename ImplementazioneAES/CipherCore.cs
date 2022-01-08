@@ -18,7 +18,7 @@ namespace ImplementazioneAES
         internal static byte[] Encrypt(byte[] input, byte[] key)
         {
             // La chiave viene espansa.
-            // l'input e' trasformati in una matrice di byte[n][16]
+            // l'input e' trasformato in una matrice di byte[n][16]
             byte[][] xkey = Utility.KeySchedule(key);
             byte[][] bytes = Utility.ByteArrayToMatrix(input, 16);
             // L'input e' criptato con la chiave
@@ -26,11 +26,6 @@ namespace ImplementazioneAES
             {
                 bytes[i] = Cipher(bytes[i], xkey);
             });
-            /*
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                bytes[i] = Cipher(bytes[i], xkey);
-            }*/
 
             // L'input è riconvertito in array
             byte[] output = Utility.ByteMatrixToArray(bytes);
@@ -38,8 +33,7 @@ namespace ImplementazioneAES
         }
 
         // esegue la criptazione su un blocco `input`
-        // Sezione 5.1, Figura 5
-        // Per maggiori informazioni: https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
+        // Sezione 5.1, Figura 5 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         internal static byte[] Cipher(byte[] input, byte[][] key)
         {
             byte[] output = (byte[])input.Clone();
@@ -65,7 +59,7 @@ namespace ImplementazioneAES
         internal static byte[] Decrypt(byte[] input, byte[] key)
         {
             // La chiave viene espansa.
-            // l'input e' trasformati in una matrice di byte[n][16]
+            // l'input e' trasformato in una matrice di byte[n][16]
             byte[][] xkey = Utility.KeySchedule(key);
             byte[][] bytes = Utility.ByteArrayToMatrix(input, 16);
             // L'input e' decriptato con la chiave
@@ -73,11 +67,6 @@ namespace ImplementazioneAES
             {
                 bytes[i] = InvCipher(bytes[i], xkey);
             });
-            /*
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                bytes[i] = InvCipher(bytes[i], xkey);
-            }*/
 
             // L'input è riconvertito in array
             byte[] output = Utility.ByteMatrixToArray(bytes);
