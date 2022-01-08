@@ -62,10 +62,9 @@ namespace ImplementazioneAES
                 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63,
                 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd,
                 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d};
-        //spostamento a sinistra dei byte in base alla variabile times che varia in base alla riga
 
-        // Dato un'array, fornisce una stringa con gli elementi che lo compongono
-        internal static string ArrayToString(this byte[] arr, string mod = "")
+        // Dato un'array di byte, fornisce una stringa formattata con gli elementi che lo compongono
+        internal static string ArrayToString(this byte[] arr, string mod = "X2")
         {
             string output = "";
             foreach (var item in arr)
@@ -75,20 +74,21 @@ namespace ImplementazioneAES
             return output;
         }
 
+        // Concatena 2 array, ridiminsionando il primo
         public static T[] Concat<T>(this T[] x, T[] y)
         {
             if (x == null) throw new ArgumentNullException("x");
             if (y == null) throw new ArgumentNullException("y");
             int oldLen = x.Length;
-            Array.Resize<T>(ref x, x.Length + y.Length);
+            Array.Resize(ref x, x.Length + y.Length);
             Array.Copy(y, 0, x, oldLen, y.Length);
             return x;
         }
 
-        // ShiftDown, puo essere considerata ShiftLeft se si ordina in colonne invece che righe
+        // Sposta gli elementi di un'array verso sinistra, tante volte quanto `times`
         internal static byte[] ShiftLeft(byte[] arr, int times)
         {
-            byte[] ShiftLeftOne(byte[] arr)
+            static byte[] ShiftLeftOne(byte[] arr)
             {
                 int len = arr.Length;
                 byte[] output = new byte[len];
@@ -112,7 +112,7 @@ namespace ImplementazioneAES
         //spostamento a destra dei byte in base alla variabile times che varia in base alla riga 
         internal static byte[] ShiftRight(byte[] arr, int times)
         {
-            byte[] ShiftRightOne(byte[] arr)
+            static byte[] ShiftRightOne(byte[] arr)
             {
                 int len = arr.Length;
                 byte[] output = new byte[len];
@@ -133,7 +133,8 @@ namespace ImplementazioneAES
             }
             return output;
         }
-        //funzione che non permette ad un numero il superamento di 256 altrimenti riparte da zero
+        // Moltiplicazione nel campo finito di Rjindael GF(2^8)
+        // Sezione 5.1.3 https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.197.pdf (cope)
         internal static byte GMul(byte a, byte b)
         {
             byte p = 0;
@@ -211,10 +212,9 @@ namespace ImplementazioneAES
             {
                 int row = i * oldLen;
                 byte[] temp = new byte[newLen];
-                byte[] cluster = new byte[0];
+                byte[] cluster = Array.Empty<byte>();
                 for (int j = 0; j < oldLen; j++)
                 {
-                    int jrow = j * oldLen;
                     cluster = cluster.Concat(w[row + j]);
                 }
                 Buffer.BlockCopy(cluster, 0, temp, 0, newLen);
@@ -240,11 +240,6 @@ namespace ImplementazioneAES
             return output;
         }
 
-        private static int mod(int x, int m)
-        {
-            return (x % m + m) % m;
-        }
-
         // Funzione che prende un'array di byte ed esegue l'operazione XOR (^) sui singoli elementi
         internal static byte[] XorArray(byte[] left, byte[] right)
         {
@@ -256,46 +251,6 @@ namespace ImplementazioneAES
                 output[i] = (byte)(left[i] ^ right[i]);
             }
 
-            return output;
-        }
-
-        // divide l'input in blocchi di lunghezza arrLen
-        internal static byte[][] StringToByteMatrix(string input, int arrLen)
-        {
-            byte[] bytes = CipherCore.ChoosenEncoding.GetBytes(input);
-            int len;
-
-            if (bytes.Length % arrLen == 0)
-            {
-                len = bytes.Length / arrLen;
-            }
-            else
-            {
-                int newLen = bytes.Length + (arrLen - (bytes.Length % arrLen));
-                Array.Resize(ref bytes, newLen);
-                len = bytes.Length / arrLen;
-            }
-
-            byte[][] output = new byte[len][];
-
-            for (int i = 0; i < len; i++)
-            {
-                int currPos = i * arrLen;
-                output[i] = new byte[arrLen];
-                Array.Copy(bytes, currPos, output[i], 0, arrLen);
-            }
-
-            return output;
-        }
-
-        // trasforma dei blocchi di byte in una stringa
-        internal static string ByteMatrixToString(byte[][] bytes)
-        {
-            string output = "";
-            foreach (var arr in bytes)
-            {
-                output += CipherCore.ChoosenEncoding.GetString(arr);
-            }
             return output;
         }
 
@@ -331,7 +286,7 @@ namespace ImplementazioneAES
         // trasforma una matrice 2D di byte in un'array di byte
         internal static byte[] ByteMatrixToArray(byte[][] bytes)
         {
-            byte[] output = new byte[0];
+            byte[] output = Array.Empty<byte>();
             foreach (var arr in bytes)
             {
                 output = output.Concat(arr);
@@ -339,6 +294,7 @@ namespace ImplementazioneAES
             return output;
         }
 
+        // Trasforma un array 1D in un array 2D
         internal static T[,] To2DArray<T>(this T[] arr)
         {
             int sideLen = (int)Math.Sqrt(arr.Length);
@@ -349,15 +305,12 @@ namespace ImplementazioneAES
             return mat;
         }
 
+        // Trasforma un array 2D in un array 1D
         internal static T[] To1DArray<T>(this T[,] mat)
         {
             T[] arr = new T[mat.GetLength(0) * mat.GetLength(1)];
-            int i = 0;
 
-            foreach (var item in mat)
-            {
-                arr[i++] = item;
-            }
+            Buffer.BlockCopy(mat, 0, arr, 0, arr.Length);
 
             return arr;
         }

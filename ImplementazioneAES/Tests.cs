@@ -20,8 +20,6 @@ namespace ImplementazioneAES
             TestAddRoundKey();
             Console.WriteLine("\nTest KeySchedule():\n");
             TestKeySchedule();
-            Console.WriteLine("\nTest ToByteArray():\n");
-            TestToByteArray();
             Console.WriteLine("\nTest Cipher:\n");
             TestCipher();
             TestCipher1();
@@ -137,7 +135,7 @@ namespace ImplementazioneAES
             Console.WriteLine("\nBytes prima:");
             foreach (var a in arr)
             {
-                Console.Write(a.ToString("X") + " ");
+                Console.Write(a.ToString() + " ");
             }
 
             byte[][] res = Utility.KeySchedule(arr);
@@ -147,32 +145,10 @@ namespace ImplementazioneAES
             {
                 foreach (var i in r)
                 {
-                    Console.Write(i.ToString("X") + " ");
+                    Console.Write(i.ToString() + " ");
                 }
                 Console.WriteLine();
             }
-        }
-
-        private static void TestToByteArray()
-        {
-            string a = "abcdefghijklmnopqrstuvwxyz123456789";
-
-            Console.WriteLine(a);
-
-            byte[][] res = Utility.StringToByteMatrix(a, 16);
-
-            foreach (var arr in res)
-            {
-                foreach (var item in arr)
-                {
-                    Console.Write(item.ToString("X") + " ");
-                }
-                Console.WriteLine();
-            }
-
-            string inv = Utility.ByteMatrixToString(res);
-
-            Console.WriteLine(inv);
         }
 
         private static void TestCipher()
@@ -180,22 +156,22 @@ namespace ImplementazioneAES
             byte[] arr = new byte[16] { 0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d, 0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34 };
             byte[] key = new byte[16] { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };
             byte[][] xkey = Utility.KeySchedule(key);
-            Console.WriteLine(arr.ArrayToString("X"));
+            Console.WriteLine(arr.ArrayToString());
             byte[] res = CipherCore.Cipher(arr, xkey);
-            Console.WriteLine(res.ArrayToString("X"));
+            Console.WriteLine(res.ArrayToString());
             byte[] inv = CipherCore.InvCipher(res, xkey);
-            Console.WriteLine(inv.ArrayToString("X"));
+            Console.WriteLine(inv.ArrayToString());
         }
         private static void TestCipher1()
         {
             byte[] arr = new byte[16] { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
             byte[] key = new byte[16] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
             byte[][] xkey = Utility.KeySchedule(key);
-            Console.WriteLine(arr.ArrayToString("X"));
+            Console.WriteLine(arr.ArrayToString());
             byte[] res = CipherCore.Cipher(arr, xkey);
-            Console.WriteLine(res.ArrayToString("X"));
+            Console.WriteLine(res.ArrayToString());
             byte[] inv = CipherCore.InvCipher(res, xkey);
-            Console.WriteLine(inv.ArrayToString("X"));
+            Console.WriteLine(inv.ArrayToString());
         }
 
         private static void TestEncrypt()
