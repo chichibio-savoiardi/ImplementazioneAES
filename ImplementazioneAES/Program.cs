@@ -77,7 +77,7 @@ La password è una parola, che viene poi hashata con MD5 per creare la chiave da
                     GiveHelp("", int.Parse(args[1]));
                     break;
                 default:
-                    Console.WriteLine("Operazione non supportata.\n" + HelpStr);
+                    GiveHelp("Operazione non supportata");
                     break;
             }
 
