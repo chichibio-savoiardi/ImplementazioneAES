@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,7 +51,6 @@ La password è una parola, che viene poi hashata con MD5 per creare la chiave da
         public static void Main(string[] args)
         {
             Start(args);
-            //Tests.Test();
         }
 
         private static void Start(string[] args)
@@ -61,7 +61,15 @@ La password è una parola, che viene poi hashata con MD5 per creare la chiave da
                 return;
             }
 
+            if (args[0] == "exit")
+            {
+                return;
+            }
+
             Console.WriteLine("Wait...");
+
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
 
             switch (args[0])
             {
@@ -76,12 +84,21 @@ La password è una parola, che viene poi hashata con MD5 per creare la chiave da
                         args = args.Concat(new string[] { "0" });
                     GiveHelp("", int.Parse(args[1]));
                     break;
+                case "test":
+                    Tests.Test();
+                    break;
                 default:
                     GiveHelp("Operazione non supportata");
                     break;
             }
 
-            Console.WriteLine("OK");
+            stopWatch.Stop();
+            TimeSpan ts = stopWatch.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts.Hours, ts.Minutes, ts.Seconds,
+            ts.Milliseconds / 10);
+
+            Console.WriteLine($"OK {elapsedTime}");
         }
 
         private static void StartEncryption(string[] args)
@@ -113,13 +130,13 @@ La password è una parola, che viene poi hashata con MD5 per creare la chiave da
         {
             if (page >= HelpStr.Length || page < 0)
             {
-                Console.WriteLine("Pagina non esistente.");
+                msg += "Pagina non esistente.";
                 page = 0;
             }
             Console.WriteLine(HelpStr[page]);
             Console.WriteLine("---");
             Console.WriteLine(msg);
-            Environment.Exit(0);
+            Start(new string[] {"exit"});
         }
     }
 }
