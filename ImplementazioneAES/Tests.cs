@@ -47,27 +47,15 @@ namespace ImplementazioneAES
 
         private static void TestShiftRows()
         {
-            Console.WriteLine("Bytes prima:");
-            foreach (var a in Arr)
-            {
-                Console.Write(a + " ");
-            }
+            Console.WriteLine($"Bytes prima: {Arr.ArrayToString()}");
 
             byte[] res = Encryptor.ShiftRows(Arr);
 
-            Console.WriteLine("\nBytes dopo:");
-            foreach (var r in res)
-            {
-                Console.Write(r + " ");
-            }
+            Console.WriteLine($"\nBytes dopo: {res.ArrayToString()}");
 
             byte[] inv = Decryptor.InvShiftRows(res);
 
-            Console.WriteLine("\nBytes reinvertiti:");
-            foreach (var r in inv)
-            {
-                Console.Write(r + " ");
-            }
+            Console.WriteLine($"\nBytes reinvertiti: {inv.ArrayToString()}");
             Console.WriteLine();
         }
 
