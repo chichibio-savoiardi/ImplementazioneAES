@@ -16,8 +16,8 @@ namespace ImplementazioneAES
     {
         public static string[] HelpStr { get; private set; } = new string[] {
 @"Strumento di criptazione e decriptazione di file con algoritmo AES128.
-Utilizzo : .\\ImplementazioneAES.exe [COMMAND] [FILENAME] [PASSWD]
-Esempio : .\\ImplementazioneAES.exe encrypt file.txt abc123'
+Utilizzo : .\ImplementazioneAES.exe [COMMAND] [FILENAME] [PASSWD]
+Esempio : .\ImplementazioneAES.exe encrypt file.txt abc123'
 Comandi possibili:
   encrypt [FILENAME] [PASSWD] : criptazione file
   decrypt [FILENAME] [PASSWD] : decriptazione file
@@ -75,6 +75,9 @@ La password è una parola, che viene poi hashata con MD5 per creare la chiave da
                     if (args.Length < 2)
                         args = args.Concat(new string[] { "0" });
                     GiveHelp("", int.Parse(args[1]));
+                    break;
+                case "test":
+                    Tests.Test();
                     break;
                 default:
                     GiveHelp("Operazione non supportata");
